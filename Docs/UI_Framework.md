@@ -21,6 +21,32 @@ Token-driven UI фреймворк для Unity 6.3 с системой диза
 
 ## 1. Начало работы
 
+### Первоначальная настройка (bootstrap)
+
+Если префабы и токены ещё не созданы, выполните bootstrap через UACF API. **Unity Editor должен быть открыт, UACF сервер запущен.**
+
+```bash
+# Полная настройка: токены, тема, все префабы
+curl -X POST http://localhost:7890/api/ui/setup/bootstrap \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+Или используйте скрипт:
+
+```bash
+./Scripts/bootstrap_ui.sh
+```
+
+Создаётся:
+- **Токены:** `Assets/Resources/UACF_UI/Tokens/` — ColorPalette, TypographySet, SpacingScale, ShapeSet, ElevationSet
+- **Тема:** `Assets/Resources/UACF_UI/DefaultTheme/DefaultTheme.asset`
+- **Префабы:** `Assets/Resources/UACF_UI/Prefabs/` — все компоненты (Display, Input, Layout, Containers, Navigation, Overlay, Feedback)
+
+Отдельные операции:
+- `POST /api/ui/setup/prefabs` — только префабы
+- `POST /api/ui/setup/tokens` — только токены и тема
+
 ### Требования
 
 - Unity 6.3+
@@ -452,6 +478,14 @@ ScriptableObject с параметрами анимации: duration, delay, cu
 | Метод | URL | Описание |
 |-------|-----|----------|
 | POST | `/api/ui/element/add` | Добавить UI-элемент |
+
+### Setup API
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/api/ui/setup/bootstrap` | Полная настройка: токены, тема, префабы |
+| POST | `/api/ui/setup/prefabs` | Создать только префабы |
+| POST | `/api/ui/setup/tokens` | Создать только токены и тему |
 
 ### Другие
 

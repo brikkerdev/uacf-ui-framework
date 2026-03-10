@@ -1,0 +1,158 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 561aa395e8d491468b2a82737574ecc7, type: 3}
+  m_Name: DefaultTypography
+  m_EditorClassIdentifier: com.uacf.ui-framework.runtime::UACF.UI.Tokens.TypographySet
+  h1:
+    key: h1
+    font: {fileID: 0}
+    fontStyle: 1
+    fontSize: 32
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  h2:
+    key: h2
+    font: {fileID: 0}
+    fontStyle: 1
+    fontSize: 24
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  h3:
+    key: h3
+    font: {fileID: 0}
+    fontStyle: 1
+    fontSize: 20
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  h4:
+    key: h4
+    font: {fileID: 0}
+    fontStyle: 1
+    fontSize: 18
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  subtitle1:
+    key: subtitle1
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 16
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  subtitle2:
+    key: subtitle2
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 14
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  body1:
+    key: body1
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 16
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  body2:
+    key: body2
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 14
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  caption:
+    key: caption
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 12
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  overline:
+    key: overline
+    font: {fileID: 0}
+    fontStyle: 0
+    fontSize: 10
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  button:
+    key: button
+    font: {fileID: 0}
+    fontStyle: 1
+    fontSize: 14
+    lineSpacing: 1.2
+    characterSpacing: 0
+    paragraphSpacing: 0
+    alignment: 257
+    autoSize: 0
+    autoSizeMin: 12
+    autoSizeMax: 72
+    overflow: 0
+  customPresets: []

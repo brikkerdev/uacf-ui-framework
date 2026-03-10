@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd8efe02a2be2ce799c1dea5f606a536, type: 3}
+  m_Name: DefaultElevation
+  m_EditorClassIdentifier: com.uacf.ui-framework.runtime::UACF.UI.Tokens.ElevationSet
+  none:
+    key: none
+    offsetX: 0
+    offsetY: 0
+    blur: 0
+    spread: 0
+    shadowColorToken: shadow
+    shadowAlpha: 0
+  low:
+    key: low
+    offsetX: 0
+    offsetY: 1
+    blur: 3
+    spread: 0
+    shadowColorToken: shadow
+    shadowAlpha: 0.12
+  mid:
+    key: mid
+    offsetX: 0
+    offsetY: 3
+    blur: 6
+    spread: 0
+    shadowColorToken: shadow
+    shadowAlpha: 0.16
+  high:
+    key: high
+    offsetX: 0
+    offsetY: 6
+    blur: 12
+    spread: 0
+    shadowColorToken: shadow
+    shadowAlpha: 0.24
+  customPresets: []

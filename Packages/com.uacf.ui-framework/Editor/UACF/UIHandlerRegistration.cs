@@ -30,6 +30,7 @@ namespace UACF.UI.Editor.UACF
                     return;
                 }
 
+                UISetupHandler.Register(router);
                 UIThemeHandler.Register(router);
                 UITokenHandler.Register(router);
                 UIScreenHandler.Register(router);
