@@ -1,0 +1,25 @@
+{
+  "name": "com.uacf.ui-framework.tests.runtime",
+  "rootNamespace": "UACF.UI.Tests",
+  "references": [
+    "com.uacf.ui-framework.runtime",
+    "UnityEngine",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

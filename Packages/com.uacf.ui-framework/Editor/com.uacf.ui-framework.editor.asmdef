@@ -1,0 +1,24 @@
+{
+  "name": "com.uacf.ui-framework.editor",
+  "rootNamespace": "UACF.UI.Editor",
+  "references": [
+    "com.uacf.ui-framework.runtime",
+    "com.uacf.editor",
+    "UnityEngine",
+    "UnityEditor",
+    "Unity.TextMeshPro",
+    "Unity.TextMeshPro.Editor",
+    "com.unity.ugui"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

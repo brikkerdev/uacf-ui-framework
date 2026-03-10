@@ -1,0 +1,13 @@
+{
+  "name": "com.uacf.ui-framework",
+  "displayName": "UACF UI Framework",
+  "version": "1.0.0",
+  "unity": "6000.3",
+  "description": "Token-driven UI framework for Unity 6.3 with design tokens, component library, screen management, and UACF API integration for AI automation.",
+  "keywords": ["UI", "UACF", "Design Tokens", "Theming", "Components"],
+  "category": "UI",
+  "dependencies": {
+    "com.unity.ugui": "2.0.0",
+    "com.unity.textmeshpro": "3.2.0-pre.8"
+  }
+}

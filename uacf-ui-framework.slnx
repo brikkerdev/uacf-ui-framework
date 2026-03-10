@@ -1,0 +1,5 @@
+﻿<Solution>
+  <Project Path="com.uacf.ui-framework.runtime.csproj" />
+  <Project Path="com.uacf.ui-framework.editor.csproj" />
+  <Project Path="com.uacf.ui-framework.tests.runtime.csproj" />
+</Solution>
