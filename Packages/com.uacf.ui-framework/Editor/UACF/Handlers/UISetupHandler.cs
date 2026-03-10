@@ -4,6 +4,7 @@ using UACF.Core;
 using UACF.Models;
 using UACF.UI.Tokens;
 using UACF.UI.Editor.Creation;
+using UACF.UI.Styles;
 using UnityEngine;
 using UnityEditor;
 
@@ -68,11 +69,30 @@ namespace UACF.UI.Editor.UACF.Handlers
                     created.Add(elevationPath);
                 }
 
-                // 2. Create theme
-                var themePath = $"{PrefabFactory.ThemesPath}/DefaultTheme.asset";
-                if (AssetDatabase.LoadAssetAtPath<Theme>(themePath) == null)
+                // 2. Create StyleSheet with default UIStyles
+                const string stylesPath = "Assets/Resources/UACF_UI/Styles";
+                PrefabFactory.EnsureDirectory(stylesPath);
+                var styleSheetPath = $"{stylesPath}/DefaultStyleSheet.asset";
+                var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(styleSheetPath);
+                if (styleSheet == null)
                 {
-                    var theme = ScriptableObject.CreateInstance<Theme>();
+                    styleSheet = ScriptableObject.CreateInstance<StyleSheet>();
+                    var stylePaths = CreateDefaultStyles(stylesPath);
+                    foreach (var sp in stylePaths)
+                    {
+                        var s = AssetDatabase.LoadAssetAtPath<UIStyle>(sp);
+                        if (s != null) styleSheet.AddStyle(s);
+                    }
+                    AssetDatabase.CreateAsset(styleSheet, styleSheetPath);
+                    created.Add(styleSheetPath);
+                }
+
+                // 3. Create theme
+                var themePath = $"{PrefabFactory.ThemesPath}/DefaultTheme.asset";
+                var theme = AssetDatabase.LoadAssetAtPath<Theme>(themePath);
+                if (theme == null)
+                {
+                    theme = ScriptableObject.CreateInstance<Theme>();
                     theme.themeName = "Default";
                     theme.themeId = "default";
                     theme.colorPalette = AssetDatabase.LoadAssetAtPath<ColorPalette>(colorPath);
@@ -80,11 +100,17 @@ namespace UACF.UI.Editor.UACF.Handlers
                     theme.spacing = AssetDatabase.LoadAssetAtPath<SpacingScale>(spacingPath);
                     theme.shapes = AssetDatabase.LoadAssetAtPath<ShapeSet>(shapePath);
                     theme.elevations = AssetDatabase.LoadAssetAtPath<ElevationSet>(elevationPath);
+                    theme.defaultStyles = styleSheet;
                     AssetDatabase.CreateAsset(theme, themePath);
                     created.Add(themePath);
                 }
+                else if (theme.defaultStyles != styleSheet)
+                {
+                    theme.defaultStyles = styleSheet;
+                    EditorUtility.SetDirty(theme);
+                }
 
-                // 3. Create prefabs
+                // 4. Create prefabs
                 var prefabList = CreateAllPrefabs();
                 created.AddRange(prefabList);
 
@@ -202,6 +228,7 @@ namespace UACF.UI.Editor.UACF.Handlers
             Save("Input", "UIButton_Filled", PrefabFactory.CreateUIButton(Components.UIButtonVariant.Filled));
             Save("Input", "UIButton_Outlined", PrefabFactory.CreateUIButton(Components.UIButtonVariant.Outlined));
             Save("Input", "UIButton_Text", PrefabFactory.CreateUIButton(Components.UIButtonVariant.Text));
+            Save("Input", "UIButton_Tonal", PrefabFactory.CreateUIButton(Components.UIButtonVariant.Tonal));
             Save("Input", "UIIconButton", PrefabFactory.CreateUIIconButton());
             Save("Input", "UIToggle", PrefabFactory.CreateUIToggle());
             Save("Input", "UISlider", PrefabFactory.CreateUISlider());
@@ -238,6 +265,76 @@ namespace UACF.UI.Editor.UACF.Handlers
             Save("Feedback", "UIHealthBar", PrefabFactory.CreateUIHealthBar());
 
             return created;
+        }
+
+        private static List<string> CreateDefaultStyles(string stylesPath)
+        {
+            var paths = new List<string>();
+
+            string CreateStyle(string componentType, System.Action<UIStyle> configure)
+            {
+                var style = ScriptableObject.CreateInstance<UIStyle>();
+                style.styleKey = componentType;
+                configure(style);
+                var path = $"{stylesPath}/{componentType}Style.asset";
+                AssetDatabase.CreateAsset(style, path);
+                paths.Add(path);
+                return path;
+            }
+
+            CreateStyle("UIButton", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("primary");
+                s.normal.textColorToken = new OptionalToken<string>("onPrimary");
+                s.hovered.backgroundColorToken = new OptionalToken<string>("primaryVariant");
+                s.pressed.backgroundColorToken = new OptionalToken<string>("primaryVariant");
+                s.disabled.backgroundColorToken = new OptionalToken<string>("disabled");
+            });
+            CreateStyle("UIText", s =>
+            {
+                s.normal.textColorToken = new OptionalToken<string>("onSurface");
+                s.normal.typographyToken = new OptionalToken<string>("body1");
+            });
+            CreateStyle("UIPanel", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("surface");
+            });
+            CreateStyle("UICard", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("surface");
+            });
+            CreateStyle("UIIconButton", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("primary");
+                s.normal.textColorToken = new OptionalToken<string>("onPrimary");
+                s.hovered.backgroundColorToken = new OptionalToken<string>("primaryVariant");
+            });
+            CreateStyle("UIToggle", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("surface");
+                s.normal.textColorToken = new OptionalToken<string>("onSurface");
+            });
+            CreateStyle("UISlider", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("primary");
+            });
+            CreateStyle("UIProgressBar", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("primary");
+            });
+            CreateStyle("UIHeader", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("surface");
+                s.normal.textColorToken = new OptionalToken<string>("onSurface");
+                s.normal.typographyToken = new OptionalToken<string>("subtitle1");
+            });
+            CreateStyle("UIBadge", s =>
+            {
+                s.normal.backgroundColorToken = new OptionalToken<string>("error");
+                s.normal.textColorToken = new OptionalToken<string>("onError");
+            });
+
+            return paths;
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UACF.UI.Components;
 using UACF.UI.Styles;
+using UACF.UI.Editor.UACF;
 
 namespace UACF.UI.Editor.Creation
 {
@@ -27,6 +28,7 @@ namespace UACF.UI.Editor.Creation
             var comp = go.AddComponent<UIText>();
             comp.SetText("Text");
 
+            AddLayoutElementForComponent(go, "UIText");
             AddStyleBinding(go, "UIText");
             return go;
         }
@@ -36,6 +38,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UIImage");
             go.AddComponent<Image>().color = Color.white;
             go.AddComponent<UIImage>();
+            AddLayoutElementForComponent(go, "UIImage");
             AddStyleBinding(go, "UIImage");
             return go;
         }
@@ -47,6 +50,7 @@ namespace UACF.UI.Editor.Creation
             img.color = Color.white;
             img.raycastTarget = false;
             go.AddComponent<UIIcon>();
+            AddLayoutElementForComponent(go, "UIIcon");
             AddStyleBinding(go, "UIIcon");
             return go;
         }
@@ -57,6 +61,7 @@ namespace UACF.UI.Editor.Creation
             var img = go.AddComponent<Image>();
             img.color = new Color(0.9f, 0.9f, 0.9f, 1f);
             go.AddComponent<UIDivider>();
+            AddLayoutElementForComponent(go, "UIDivider");
             AddStyleBinding(go, "UIDivider");
             return go;
         }
@@ -78,6 +83,7 @@ namespace UACF.UI.Editor.Creation
             var badge = go.AddComponent<UIBadge>();
             SetPrivateField(badge, "_background", bg);
             SetPrivateField(badge, "_label", tmp);
+            AddLayoutElementForComponent(go, "UIBadge");
             AddStyleBinding(go, "UIBadge");
             return go;
         }
@@ -112,6 +118,7 @@ namespace UACF.UI.Editor.Creation
             var unityBtn = go.AddComponent<Button>();
             unityBtn.targetGraphic = img;
 
+            AddLayoutElementForComponent(go, "UIButton");
             AddStyleBinding(go, "UIButton");
             return go;
         }
@@ -123,6 +130,7 @@ namespace UACF.UI.Editor.Creation
             img.color = new Color(0.38f, 0f, 0.93f, 1f);
             go.AddComponent<UIIconButton>();
             go.AddComponent<Button>().targetGraphic = img;
+            AddLayoutElementForComponent(go, "UIIconButton");
             AddStyleBinding(go, "UIIconButton");
             return go;
         }
@@ -143,6 +151,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(uiToggle, "_track", track);
             SetPrivateField(uiToggle, "_thumb", thumb);
             SetPrivateField(uiToggle, "_toggle", toggle);
+            AddLayoutElementForComponent(go, "UIToggle");
             AddStyleBinding(go, "UIToggle");
             return go;
         }
@@ -174,6 +183,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(uiSlider, "_trackFill", fill);
             SetPrivateField(uiSlider, "_thumb", handleGo.GetComponent<Image>());
             SetPrivateField(uiSlider, "_slider", slider);
+            AddLayoutElementForComponent(go, "UISlider");
             AddStyleBinding(go, "UISlider");
             return go;
         }
@@ -183,6 +193,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UIDropdown");
             go.AddComponent<Image>().color = Color.white;
             go.AddComponent<UIDropdown>();
+            AddLayoutElementForComponent(go, "UIDropdown");
             AddStyleBinding(go, "UIDropdown");
             return go;
         }
@@ -220,6 +231,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(uiInput, "_background", bg);
             SetPrivateField(uiInput, "_inputText", text);
             SetPrivateField(uiInput, "_placeholder", phText);
+            AddLayoutElementForComponent(go, "UIInputField");
             AddStyleBinding(go, "UIInputField");
             return go;
         }
@@ -240,6 +252,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(uiCheck, "_box", box);
             SetPrivateField(uiCheck, "_checkmark", check);
             SetPrivateField(uiCheck, "_toggle", toggle);
+            AddLayoutElementForComponent(go, "UICheckbox");
             AddStyleBinding(go, "UICheckbox");
             return go;
         }
@@ -299,6 +312,7 @@ namespace UACF.UI.Editor.Creation
             content.transform.SetParent(go.transform, false);
             content.AddComponent<RectTransform>();
             go.AddComponent<UIPanel>();
+            AddLayoutElementForComponent(go, "UIPanel");
             AddStyleBinding(go, "UIPanel");
             return go;
         }
@@ -308,6 +322,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UICard");
             go.AddComponent<Image>().color = new Color(0.98f, 0.98f, 0.98f, 1f);
             go.AddComponent<UICard>();
+            AddLayoutElementForComponent(go, "UICard");
             AddStyleBinding(go, "UICard");
             return go;
         }
@@ -342,6 +357,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(uiScroll, "_scrollRect", scrollRect);
             SetPrivateField(uiScroll, "_content", contentRt);
             SetPrivateField(uiScroll, "_background", go.GetComponent<Image>());
+            AddLayoutElementForComponent(go, "UIScrollView");
             AddStyleBinding(go, "UIScrollView");
             return go;
         }
@@ -350,6 +366,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UIList");
             go.AddComponent<UIList>();
+            AddLayoutElementForComponent(go, "UIList");
             AddStyleBinding(go, "UIList");
             return go;
         }
@@ -359,6 +376,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UIListItem");
             go.AddComponent<Image>().color = Color.clear;
             go.AddComponent<UIListItem>();
+            AddLayoutElementForComponent(go, "UIListItem");
             AddStyleBinding(go, "UIListItem");
             return go;
         }
@@ -367,6 +385,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UITabContainer");
             go.AddComponent<UITabContainer>();
+            AddLayoutElementForComponent(go, "UITabContainer");
             AddStyleBinding(go, "UITabContainer");
             return go;
         }
@@ -376,6 +395,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UIHeader");
             go.AddComponent<Image>().color = new Color(0.98f, 0.98f, 0.98f, 1f);
             go.AddComponent<UIHeader>();
+            AddLayoutElementForComponent(go, "UIHeader");
             AddStyleBinding(go, "UIHeader");
             return go;
         }
@@ -384,6 +404,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UIToolbar");
             go.AddComponent<UIToolbar>();
+            AddLayoutElementForComponent(go, "UIToolbar");
             AddStyleBinding(go, "UIToolbar");
             return go;
         }
@@ -392,6 +413,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UIBottomBar");
             go.AddComponent<UIBottomBar>();
+            AddLayoutElementForComponent(go, "UIBottomBar");
             AddStyleBinding(go, "UIBottomBar");
             return go;
         }
@@ -400,6 +422,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UITabBar");
             go.AddComponent<UITabBar>();
+            AddLayoutElementForComponent(go, "UITabBar");
             AddStyleBinding(go, "UITabBar");
             return go;
         }
@@ -408,6 +431,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UISidebar");
             go.AddComponent<UISidebar>();
+            AddLayoutElementForComponent(go, "UISidebar");
             AddStyleBinding(go, "UISidebar");
             return go;
         }
@@ -418,6 +442,7 @@ namespace UACF.UI.Editor.Creation
             var img = go.AddComponent<Image>();
             img.color = new Color(0, 0, 0, 0.5f);
             go.AddComponent<UIOverlay>();
+            AddLayoutElementForComponent(go, "UIOverlay");
             AddStyleBinding(go, "UIOverlay");
             return go;
         }
@@ -427,6 +452,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UIModal");
             go.AddComponent<Image>().color = Color.white;
             go.AddComponent<UIModal>();
+            AddLayoutElementForComponent(go, "UIModal");
             AddStyleBinding(go, "UIModal");
             return go;
         }
@@ -435,6 +461,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UIDialog");
             go.AddComponent<UIDialog>();
+            AddLayoutElementForComponent(go, "UIDialog");
             AddStyleBinding(go, "UIDialog");
             return go;
         }
@@ -443,6 +470,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UIToast");
             go.AddComponent<UIToast>();
+            AddLayoutElementForComponent(go, "UIToast");
             AddStyleBinding(go, "UIToast");
             return go;
         }
@@ -451,6 +479,7 @@ namespace UACF.UI.Editor.Creation
         {
             var go = CreateBase("UITooltip");
             go.AddComponent<UITooltip>();
+            AddLayoutElementForComponent(go, "UITooltip");
             AddStyleBinding(go, "UITooltip");
             return go;
         }
@@ -472,6 +501,7 @@ namespace UACF.UI.Editor.Creation
             var bar = go.AddComponent<UIProgressBar>();
             SetPrivateField(bar, "_trackBackground", track);
             SetPrivateField(bar, "_fill", fill);
+            AddLayoutElementForComponent(go, "UIProgressBar");
             AddStyleBinding(go, "UIProgressBar");
             return go;
         }
@@ -481,6 +511,7 @@ namespace UACF.UI.Editor.Creation
             var go = CreateBase("UISpinner");
             go.AddComponent<Image>().color = new Color(0.38f, 0f, 0.93f, 1f);
             go.AddComponent<UISpinner>();
+            AddLayoutElementForComponent(go, "UISpinner");
             AddStyleBinding(go, "UISpinner");
             return go;
         }
@@ -512,6 +543,7 @@ namespace UACF.UI.Editor.Creation
             SetPrivateField(bar, "_backgroundBar", bg);
             SetPrivateField(bar, "_healthFill", healthImg);
             SetPrivateField(bar, "_damageFill", damageImg);
+            AddLayoutElementForComponent(go, "UIHealthBar");
             AddStyleBinding(go, "UIHealthBar");
             return go;
         }
@@ -520,11 +552,17 @@ namespace UACF.UI.Editor.Creation
         {
             var go = new GameObject(name);
             var rt = go.AddComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0.5f, 0.5f);
-            rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchorMin = new Vector2(0, 1);
+            rt.anchorMax = new Vector2(1, 1);
+            rt.pivot = new Vector2(0.5f, 1f);
             rt.sizeDelta = new Vector2(200, 40);
             return go;
+        }
+
+        private static void AddLayoutElementForComponent(GameObject go, string componentType)
+        {
+            var le = LayoutElementDefaults.GetOrAdd(go);
+            LayoutElementDefaults.ApplyTo(le, componentType);
         }
 
         private static void AddStyleBinding(GameObject go, string componentType)

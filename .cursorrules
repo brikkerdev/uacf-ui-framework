@@ -1,0 +1,151 @@
+# UACF - Unity Autonomous Control Framework
+
+This project includes UACF, an HTTP API server in Unity Editor for AI agent control.
+
+**Правило для агента:** Никогда не создавать одноразовые скрипты для выполнения задач. Использовать только команды фреймворка через curl (UACF API). Все операции — через HTTP endpoints.
+
+## UACF API (localhost:7890)
+
+When Unity Editor is running, the UACF server provides these endpoints:
+
+### Status & Health
+- `GET /api/ping` - Health check (no main thread)
+- `GET /api/status` - Server status, Unity version, project info, is_compiling, active_scene, uptime
+
+### Assets
+- `POST /api/assets/refresh` - Refresh AssetDatabase
+- `GET /api/assets/find?filter=t:Script&path=Assets/Scripts` - Find assets
+- `POST /api/assets/create-folder` - Body: `{"path":"Assets/Scripts/Player"}`
+- `DELETE /api/assets/delete` - Body: `{"path":"Assets/Scripts/Old.cs"}`
+
+### Compilation
+- `POST /api/compile/request` - Body: `{"wait":true,"timeout_seconds":60}` - Trigger compile, optionally wait
+- `GET /api/compile/status` - Current compilation status
+- `GET /api/compile/errors?severity=error` - Get last compile errors/warnings
+
+### Files
+- `POST /api/file/write` - Body: `{"path":"Assets/Scripts/X.cs","content":"...","auto_refresh":true,"wait_compile":true}`
+- `GET /api/file/read?path=Assets/Scripts/X.cs` - Read file
+
+### Scenes
+- `GET /api/scene/list` - List loaded scenes
+- `POST /api/scene/open` - Body: `{"path":"Assets/Scenes/X.unity","mode":"Single"}`
+- `POST /api/scene/save` - Save active scene
+- `POST /api/scene/new` - Body: `{"path":"Assets/Scenes/New.unity","template":"default"}`
+- `GET /api/scene/hierarchy?include_components=true&depth=3` - Get hierarchy
+
+### GameObjects
+- `POST /api/gameobject/create` - Body: `{"name":"Player","tag":"Player","components":[{"type":"Rigidbody","fields":{"mass":1}}]}`
+- `GET /api/gameobject/find?name=Player` - Find by name/tag/path/component
+- `PUT /api/gameobject/modify` - Body: `{"target":{"instance_id":123},"set":{"name":"X","active":true}}`
+- `DELETE /api/gameobject/destroy` - Body: `{"target":{"name":"Player"}}`
+- `POST /api/gameobject/set-parent` - Body: `{"target":{"name":"X"},"parent":{"name":"Y"}}`
+- `POST /api/gameobject/duplicate` - Body: `{"target":{"name":"X"},"new_name":"X (2)"}`
+
+### Components
+- `POST /api/component/add` - Body: `{"target":{"name":"Player"},"component_type":"Rigidbody","fields":{"mass":1}}`
+- `GET /api/component/get?instance_id=123&component=PlayerController` - Get component fields
+- `PUT /api/component/set-fields` - Body: `{"target":{"name":"Player"},"component":"PlayerController","fields":{"moveSpeed":7.5}}`
+- `DELETE /api/component/remove` - Body: `{"target":{"name":"Player"},"component":"BoxCollider"}`
+- `GET /api/component/list-types?filter=Collider` - List available component types
+
+### Prefabs
+- `POST /api/prefab/create` - Body: `{"source":{"instance_id":123},"path":"Assets/Prefabs/X.prefab"}`
+- `POST /api/prefab/instantiate` - Body: `{"prefab_path":"Assets/Prefabs/X.prefab","name":"X_01"}`
+- `PUT /api/prefab/modify` - Body: `{"prefab_path":"...","operations":[{"action":"add_component","component":"AudioSource"}]}`
+
+### Batch
+- `POST /api/batch/execute` - Body: `{"operations":[{"id":"op1","endpoint":"POST /api/gameobject/create","body":{...}}],"stop_on_error":true}`
+
+### Editor
+- `POST /api/editor/play` - Start Play Mode
+- `POST /api/editor/stop` - Stop Play Mode
+- `POST /api/editor/pause` - Pause/Resume
+
+### Project
+- `GET /api/project/settings?category=tags` - Get tags/layers
+- `POST /api/project/add-tag` - Body: `{"tag":"Enemy"}`
+- `POST /api/project/set-layer` - Body: `{"layer_index":8,"name":"Player"}`
+
+## Target format
+- `{"instance_id": 12345}` - By Instance ID
+- `{"name": "Player"}` - By name
+- `{"path": "Canvas/Panel"}` - By hierarchy path
+- `{"tag": "Player"}` - By tag
+
+## Field value formats
+- Primitives: `5.0`, `"hello"`, `true`
+- Vector3: `{"x":1,"y":2,"z":3}`
+- Reference: `{"reference":{"name":"GroundCheck"}}` or `{"reference":{"instance_id":123}}`
+- Asset: `{"asset":"Assets/Materials/Red.mat"}`
+
+---
+
+## UACF UI Framework (uacf-ui-framework)
+
+Token-driven UI фреймворк: дизайн-токены, компоненты, экраны, интеграция с UACF API.
+
+### Bootstrap (первоначальная настройка)
+- `POST /api/ui/setup/bootstrap` — полная настройка: токены, тема, префабы (Unity + UACF должны быть запущены)
+- `POST /api/ui/setup/prefabs` — только префабы
+- `POST /api/ui/setup/tokens` — только токены и тема
+
+### Theme API
+- `GET /api/ui/themes` — список тем
+- `POST /api/ui/theme/create` — создать тему (body: `{"theme_id":"monochrome","theme_name":"Monochrome","palette_id":"default","colors":{"primary":{"r":0,"g":0,"b":0,"a":1}}}`)
+- `PUT /api/ui/theme/apply` — применить тему (body: `{"theme_id":"default-dark"}`)
+- `GET /api/ui/theme/get` — получить токены темы
+
+### Token API
+- `PUT /api/ui/tokens/colors` — обновить цвета (body: `{"palette_id":"default","colors":{"primary":{"r":0,"g":0,"b":0,"a":1}}}`)
+- `POST /api/ui/tokens/colors/add-custom` — добавить кастомный цвет (body: `{"key":"myColor","color":{"r":0.5,"g":0.5,"b":0.5,"a":1}}`)
+- `PUT /api/ui/tokens/typography` — обновить типографику (body: `{"preset_id":"default","presets":{"h1":{"fontSize":32,"fontStyle":"Bold"}}}`)
+- `PUT /api/ui/tokens/spacing` — обновить отступы (body: `{"scale_id":"default","values":{"md":16,"lg":24}}`)
+
+### Screen API
+- `POST /api/ui/screen/create` — создать экран (body: `{"screen_id":"main","name":"MainScreen","scene_path":"Assets/Scenes/SampleScene.unity"}`)
+- `GET /api/ui/screen/hierarchy` — иерархия экрана
+- `POST /api/ui/screen/show` — показать экран по screen_id. Body: `{"screen_id":"main_menu","hide_others":true}` — hide_others скрывает остальные экраны
+- `POST /api/ui/screen/from-spec` — создать экран по спецификации. Body: `{"scene_path":"...","screen_id":"main","name":"MainScreen","theme_id":"default","canvas":{...},"operations":[{"id":"content","method":"POST","path":"/api/ui/layout/create","body":{"type":"vertical","parent":{"ref":"content"},...}},...]}`. Результат screen/create даёт ref "root" и "content" (Content внутри UIPanel)
+
+### Layout API (Layout First)
+- `POST /api/ui/layout/create` — создать layout. Body: `{"type":"vertical","name":"Root","parent":{"name":"Canvas"}}`. Параметры: `spacing` (число или "sm"/"md"/"lg"), `padding` (число или {left,right,top,bottom}), `childForceExpandWidth`, `childForceExpandHeight`, `childAlignment`. Grid: `cellSize`, `constraint`, `constraintCount`
+
+### Element API (Layout First)
+- `POST /api/ui/element/add` — добавить UI-элемент. Body: `{"parent":{...},"component":"UIButton","name":"X","properties":{}}`. Опционально: `rect` (anchorMin, anchorMax, sizeDelta), `layout` (preferredWidth, preferredHeight, flexibleWidth, flexibleHeight). При добавлении в layout-группу автоматически применяются LayoutElement-дефолты
+- `PUT /api/ui/element/modify` — изменить элемент. Body: `{"target":{...},"set":{"name":"X","properties":{},"layout":{}},"rect":{},"scrollRect":{},"contentSizeFitter":{}}`. `set.layout` — preferredWidth, preferredHeight, flexibleWidth, flexibleHeight, layoutPriority. `scrollRect` — horizontal, vertical, movementType, elasticity, scrollSensitivity. `contentSizeFitter` — horizontalFit, verticalFit (Unconstrained/PreferredSize/MinSize)
+- `DELETE /api/ui/element/remove` — удалить (body: `{"target":{"instance_id":123}}`)
+- `POST /api/ui/element/reorder` — изменить порядок (body: `{"target":{"instance_id":123},"sibling_index":0}`)
+
+### Style API
+- `POST /api/ui/style/create` — создать UIStyle. Body: `{"key":"my_style","parent":"base_style","normal":{"backgroundColorToken":"primary","textColorToken":"onPrimary"},"hovered":{...}}`
+- `PUT /api/ui/style/apply` — применить стиль к элементу. Body: `{"target":{"instance_id":123},"style":"my_style"}` (style — styleKey или asset path)
+- `GET /api/ui/style/list` — список всех UIStyle (key, path, has_parent, parent_key)
+
+### Canvas API
+- `PUT /api/ui/canvas/configure` — настроить Canvas/CanvasScaler. Body: `{"target":{"name":"Canvas"},"renderMode":"Overlay","referenceResolution":{"x":1920,"y":1080},"matchWidthOrHeight":0.5,"scaleFactor":1}`
+
+### Прочее
+- `GET /api/ui/components/list` — список доступных компонентов (полный список из ComponentToPrefab + properties)
+- `POST /api/ui/batch` — пакетные операции (body: `{"operations":[{"id":"op1","method":"POST","path":"/api/ui/layout/create","body":{...}}],"stop_on_error":true}`). Поддержка `parent: {"ref":"op1"}` для ссылки на результат предыдущей операции. Batch поддерживает: screen/create, layout/create, element/add, element/modify, theme/apply
+
+### Принципы
+- **Token-driven** — цвета, шрифты, отступы в ScriptableObjects (ColorPalette, TypographySet, SpacingScale, ShapeSet, ElevationSet, IconSet), не хардкод
+- **Prefab-based** — компоненты — префабы в `Assets/Resources/UACF_UI/Prefabs/`
+- **Composable** — экраны собираются из компонентов
+- **Theme-switchable** — ThemeManager.SetTheme() обновляет весь UI
+- **Layout First** — сначала layout (vertical/horizontal/grid), затем элементы; LayoutElement по умолчанию, spacing/padding через токены
+
+### Компоненты (GameObject > UACF UI >)
+- **Display:** UIText, UIImage, UIIcon, UIDivider, UIBadge
+- **Input:** UIButton (Filled/Outlined/Text/Tonal), UIIconButton, UIToggle, UISlider, UIDropdown, UIInputField, UICheckbox
+- **Layout:** UIVerticalLayout, UIHorizontalLayout, UIGridLayout, UISpacer
+- **Containers:** UIPanel, UICard, UIScrollView, UIList, UITabContainer
+- **Navigation:** UIHeader, UIToolbar, UIBottomBar, UITabBar, UISidebar
+- **Overlay:** UIOverlay, UIModal, UIDialog, UIToast, UITooltip
+- **Feedback:** UIProgressBar, UISpinner, UIHealthBar
+
+### Токены (семантика)
+- **ColorPalette:** primary, secondary, background, surface, error, warning, success, onPrimary, onSurface, divider, disabled
+- **TypographySet:** h1–h4, subtitle1/2, body1/2, caption, overline, button
+- **SpacingScale:** none, xxs, xs, sm, md, lg, xl, xxl, xxxl

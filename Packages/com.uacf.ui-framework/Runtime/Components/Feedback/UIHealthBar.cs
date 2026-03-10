@@ -41,6 +41,8 @@ namespace UACF.UI.Components
             }
         }
 
+        public float CurrentHealth => currentHealth;
+        public float MaxHealth => maxHealth;
         public void SetHealth(float current, float max) { currentHealth = current; maxHealth = max; }
         public void TakeDamage(float amount) { currentHealth = Mathf.Max(0, currentHealth - amount); }
         public void Heal(float amount) { currentHealth = Mathf.Min(maxHealth, currentHealth + amount); }

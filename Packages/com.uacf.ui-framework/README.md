@@ -42,13 +42,21 @@ Add to your project's `Packages/manifest.json`:
 
 When UACF is installed, the following endpoints are available:
 
-- `GET /api/ui/themes` — List themes
-- `POST /api/ui/theme/create` — Create theme
-- `PUT /api/ui/theme/apply` — Apply theme
-- `GET /api/ui/theme/get` — Get theme tokens
-- `POST /api/ui/screen/create` — Create screen
-- `POST /api/ui/element/add` — Add UI element
-- `GET /api/ui/components/list` — List available components
+**Theme:** `GET /api/ui/themes`, `POST /api/ui/theme/create`, `PUT /api/ui/theme/apply`, `GET /api/ui/theme/get`
+
+**Tokens:** `PUT /api/ui/tokens/colors`, `POST /api/ui/tokens/colors/add-custom`, `PUT /api/ui/tokens/typography`, `PUT /api/ui/tokens/spacing`
+
+**Screen:** `POST /api/ui/screen/create`, `GET /api/ui/screen/hierarchy`
+
+**Layout:** `POST /api/ui/layout/create` — create vertical/horizontal/grid layout
+
+**Elements:** `POST /api/ui/element/add`, `PUT /api/ui/element/modify`, `DELETE /api/ui/element/remove`, `POST /api/ui/element/reorder`
+
+**Batch:** `POST /api/ui/batch` — batch operations with `parent: {"ref":"op_id"}` for chaining
+
+**Other:** `GET /api/ui/components/list` — list available components
+
+All operations are available via HTTP API (curl, Postman, AI agents) without one-off scripts.
 
 ## Documentation
 

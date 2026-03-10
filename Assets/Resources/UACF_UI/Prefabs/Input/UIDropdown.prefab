@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3653806336620549247}
   - component: {fileID: 7738475026814389045}
   - component: {fileID: 8200486205019274667}
+  - component: {fileID: 6192852804142899562}
   - component: {fileID: 3220420121844159689}
   m_Layer: 0
   m_Name: UIDropdown
@@ -34,11 +35,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 40}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &3653806336620549247
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -102,6 +103,26 @@ MonoBehaviour:
   onSelectionChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6192852804142899562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2896458347684287331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 40
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!114 &3220420121844159689
 MonoBehaviour:
   m_ObjectHideFlags: 0

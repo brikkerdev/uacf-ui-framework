@@ -21,32 +21,6 @@ Token-driven UI фреймворк для Unity 6.3 с системой диза
 
 ## 1. Начало работы
 
-### Первоначальная настройка (bootstrap)
-
-Если префабы и токены ещё не созданы, выполните bootstrap через UACF API. **Unity Editor должен быть открыт, UACF сервер запущен.**
-
-```bash
-# Полная настройка: токены, тема, все префабы
-curl -X POST http://localhost:7890/api/ui/setup/bootstrap \
-  -H "Content-Type: application/json" \
-  -d '{}'
-```
-
-Или используйте скрипт:
-
-```bash
-./Scripts/bootstrap_ui.sh
-```
-
-Создаётся:
-- **Токены:** `Assets/Resources/UACF_UI/Tokens/` — ColorPalette, TypographySet, SpacingScale, ShapeSet, ElevationSet
-- **Тема:** `Assets/Resources/UACF_UI/DefaultTheme/DefaultTheme.asset`
-- **Префабы:** `Assets/Resources/UACF_UI/Prefabs/` — все компоненты (Display, Input, Layout, Containers, Navigation, Overlay, Feedback)
-
-Отдельные операции:
-- `POST /api/ui/setup/prefabs` — только префабы
-- `POST /api/ui/setup/tokens` — только токены и тема
-
 ### Требования
 
 - Unity 6.3+
@@ -448,51 +422,146 @@ ScriptableObject с параметрами анимации: duration, delay, cu
 
 **Базовый URL:** `http://localhost:7890` (порт UACF)
 
+**Target format** (для parent, target): `{"instance_id": 123}`, `{"name": "Canvas"}`, `{"path": "Canvas/Panel"}`
+
+### Bootstrap (первоначальная настройка)
+
+Перед использованием API создайте токены и префабы. Unity Editor и UACF должны быть запущены.
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/api/ui/setup/bootstrap` | Полная настройка: токены (ColorPalette, TypographySet, SpacingScale, ShapeSet, ElevationSet), тема DefaultTheme, все префабы компонентов |
+| POST | `/api/ui/setup/prefabs` | Только префабы компонентов |
+| POST | `/api/ui/setup/tokens` | Только токены и тема |
+
 ### Theme API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| GET | `/api/ui/themes` | Список тем |
+| GET | `/api/ui/themes` | Список тем (id, name, path, is_active) |
 | POST | `/api/ui/theme/create` | Создать тему |
-| PUT | `/api/ui/theme/apply` | Применить тему |
-| GET | `/api/ui/theme/get` | Получить токены темы |
+| PUT | `/api/ui/theme/apply` | Применить тему (только в Play Mode) |
+| GET | `/api/ui/theme/get` | Получить токены активной темы |
+
+**theme/create body:** `{"theme_id":"monochrome","theme_name":"Monochrome","palette_id":"default","colors":{"primary":{"r":0,"g":0,"b":0,"a":1}}}`
+
+**theme/apply body:** `{"theme_id":"default-dark"}`
 
 ### Token API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| PUT | `/api/ui/tokens/colors` | Обновить цвета |
+| PUT | `/api/ui/tokens/colors` | Обновить цвета палитры |
 | POST | `/api/ui/tokens/colors/add-custom` | Добавить кастомный цвет |
 | PUT | `/api/ui/tokens/typography` | Обновить типографику |
 | PUT | `/api/ui/tokens/spacing` | Обновить отступы |
+
+**tokens/colors body:** `{"palette_id":"default","colors":{"primary":{"r":0,"g":0,"b":0,"a":1}}}`
+
+**tokens/colors/add-custom body:** `{"key":"myColor","color":{"r":0.5,"g":0.5,"b":0.5,"a":1}}`
+
+**tokens/typography body:** `{"preset_id":"default","presets":{"h1":{"fontSize":32,"fontStyle":"Bold"}}}`
+
+**tokens/spacing body:** `{"scale_id":"default","values":{"md":16,"lg":24}}`
 
 ### Screen API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| POST | `/api/ui/screen/create` | Создать экран из шаблона |
-| GET | `/api/ui/screen/hierarchy` | Иерархия экрана |
+| POST | `/api/ui/screen/create` | Создать экран (открыть сцену, Canvas, root UIPanel) |
+| GET | `/api/ui/screen/hierarchy` | Иерархия экрана (screen_id в query) |
+| POST | `/api/ui/screen/show` | Показать экран по screen_id, скрыть остальные |
+| POST | `/api/ui/screen/from-spec` | Создать экран по JSON-спецификации (screen + layout + elements + theme) |
+
+**screen/create body:** `{"screen_id":"main","name":"MainScreen","scene_path":"Assets/Scenes/SampleScene.unity"}` — scene_path опционален; если не указан, используется текущая сцена.
+
+**screen/show body:** `{"screen_id":"main_menu","hide_others":true}` — hide_others (по умолчанию true) скрывает остальные экраны с UIScreenMarker.
+
+**screen/from-spec body:** `{"scene_path":"Assets/Scenes/MyScene.unity","screen_id":"main_menu","name":"MainMenuScreen","theme_id":"default","canvas":{"referenceResolution":{"x":1920,"y":1080}},"operations":[{"id":"main","method":"POST","path":"/api/ui/layout/create","body":{"type":"vertical","name":"Main","parent":{"ref":"content"},"spacing":"md"}},{"id":"btn1","method":"POST","path":"/api/ui/element/add","body":{"parent":{"ref":"main"},"component":"UIButton","name":"PlayBtn","properties":{"labelText":"Play"}}}]}`. После screen/create доступны ref "root" (UIPanel) и "content" (Content внутри UIPanel). Layout обычно создаётся с parent: `{"ref":"content"}`.
+
+### Layout API
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/api/ui/layout/create` | Создать layout (vertical, horizontal, grid) |
+
+**layout/create body:** `{"type":"vertical","name":"Root","parent":{"name":"Canvas"}}` — type: `vertical`, `horizontal`, `grid`.
+
+**Layout First — параметры layout/create:**
+- `spacing` — число или токен ("sm", "md", "lg")
+- `padding` — число (все стороны) или объект `{left, right, top, bottom}` (числа или токены)
+- `childForceExpandWidth`, `childForceExpandHeight` — bool
+- `childAlignment` — строка ("UpperLeft", "MiddleCenter" и т.д.)
+- Для grid: `cellSize` — `{x, y}`, `constraint` — "Flexible"/"FixedColumnCount"/"FixedRowCount", `constraintCount` — int
 
 ### Element API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
 | POST | `/api/ui/element/add` | Добавить UI-элемент |
+| PUT | `/api/ui/element/modify` | Изменить элемент (name, properties, rect) |
+| DELETE | `/api/ui/element/remove` | Удалить элемент |
+| POST | `/api/ui/element/reorder` | Изменить порядок (sibling_index) |
 
-### Setup API
+**element/add body:** `{"parent":{"instance_id":123},"component":"UIButton","name":"PlayButton","properties":{"labelText":"Play","variant":"Filled"}}` — component: UIText, UIImage, UIButton, UIPanel, UIVerticalLayout и др. (см. раздел 6). UIButton поддерживает variant: Filled, Outlined, Text, Tonal.
+
+**properties поддерживает:**
+- `labelText`, `variant` — UIButton
+- `value`, `minValue`, `maxValue` — UISlider, UIProgressBar
+- `isOn` — UIToggle, UICheckbox
+- `options` — UIDropdown (массив строк)
+- `currentHealth`, `maxHealth` — UIHealthBar
+- `{"asset":"Assets/..."}` — ссылки на Sprite, Texture2D, Font, TMP_FontAsset
+
+**Layout First — element/add поддерживает:**
+- `rect` — `{anchorMin, anchorMax, offsetMin, offsetMax, sizeDelta}` — объекты с x, y
+- `layout` — `{preferredWidth, preferredHeight, flexibleWidth, flexibleHeight, minWidth, minHeight, layoutPriority}` — для LayoutElement (при добавлении в layout-группу)
+- `scrollRect` — для UIScrollView: `{horizontal, vertical, movementType, elasticity, scrollSensitivity}`
+- `contentSizeFitter` — для контента ScrollView: `{horizontalFit, verticalFit}` — Unconstrained, PreferredSize, MinSize
+
+**element/modify body:** `{"target":{"instance_id":123},"set":{"name":"X","properties":{},"layout":{}},"rect":{},"scrollRect":{},"contentSizeFitter":{}}`
+- `set.layout` — `{preferredWidth, preferredHeight, flexibleWidth, flexibleHeight, minWidth, minHeight, layoutPriority}` — обновить LayoutElement
+- `scrollRect` — `{horizontal, vertical, movementType, elasticity, scrollSensitivity}`
+- `contentSizeFitter` — `{horizontalFit, verticalFit}`
+
+**element/remove body:** `{"target":{"instance_id":123}}`
+
+**element/reorder body:** `{"target":{"instance_id":123},"sibling_index":0}`
+
+### Style API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| POST | `/api/ui/setup/bootstrap` | Полная настройка: токены, тема, префабы |
-| POST | `/api/ui/setup/prefabs` | Создать только префабы |
-| POST | `/api/ui/setup/tokens` | Создать только токены и тему |
+| POST | `/api/ui/style/create` | Создать UIStyle. Body: `{"key":"my_style","parent":"base_style","normal":{"backgroundColorToken":"primary","textColorToken":"onPrimary"},"hovered":{...}}` |
+| PUT | `/api/ui/style/apply` | Применить стиль к элементу. Body: `{"target":{"instance_id":123},"style":"my_style"}` (style — styleKey или asset path) |
+| GET | `/api/ui/style/list` | Список всех UIStyle (key, path, has_parent, parent_key) |
 
-### Другие
+### Canvas API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| GET | `/api/ui/components/list` | Список компонентов |
-| POST | `/api/ui/batch` | Пакетные операции |
+| PUT | `/api/ui/canvas/configure` | Настроить Canvas/CanvasScaler. Body: `{"target":{"name":"Canvas"},"renderMode":"Overlay","referenceResolution":{"x":1920,"y":1080},"matchWidthOrHeight":0.5,"scaleFactor":1}` |
+
+**screen/create** поддерживает опциональный блок `canvas`: `{"renderMode":"Overlay","referenceResolution":{"x":1920,"y":1080},"matchWidthOrHeight":0.5,"scaleFactor":1}`
+
+### Прочее
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET | `/api/ui/components/list` | Список доступных компонентов (полный список + properties по типу) |
+| POST | `/api/ui/batch` | Пакетные операции с цепочкой parent: `{"ref":"op_id"}` |
+
+**batch body:** `{"operations":[{"id":"op1","method":"POST","path":"/api/ui/layout/create","body":{...}},{"id":"op2","method":"POST","path":"/api/ui/element/add","body":{"parent":{"ref":"op1"},...}}],"stop_on_error":true}`
+
+**Поддерживаемые batch-операции:** `POST /api/ui/screen/create`, `POST /api/ui/layout/create`, `POST /api/ui/element/add`, `PUT /api/ui/element/modify`, `PUT /api/ui/theme/apply`.
+
+### Пример: bootstrap
+
+```bash
+curl -X POST http://localhost:7890/api/ui/setup/bootstrap
+```
+
+Bootstrap создаёт токены (ColorPalette, TypographySet, SpacingScale, ShapeSet, ElevationSet), тему DefaultTheme, StyleSheet с базовыми UIStyle для UIButton, UIText, UIPanel и др., назначает theme.defaultStyles, и префабы всех компонентов.
 
 ### Пример: создать экран
 
@@ -501,15 +570,20 @@ curl -X POST http://localhost:7890/api/ui/screen/create \
   -H "Content-Type: application/json" \
   -d '{
     "screen_id": "main_menu",
-    "template": "HeaderContentTemplate",
     "name": "MainMenuScreen",
-    "header": {"title": "Main Menu"}
+    "scene_path": "Assets/Scenes/SampleScene.unity"
   }'
 ```
 
-### Пример: добавить элемент
+### Пример: создать layout и добавить кнопку
 
 ```bash
+# 1. Создать layout
+curl -X POST http://localhost:7890/api/ui/layout/create \
+  -H "Content-Type: application/json" \
+  -d '{"type":"vertical","name":"Root","parent":{"name":"Canvas"}}'
+
+# 2. Добавить кнопку (parent.instance_id из ответа шага 1)
 curl -X POST http://localhost:7890/api/ui/element/add \
   -H "Content-Type: application/json" \
   -d '{
@@ -525,12 +599,80 @@ curl -X POST http://localhost:7890/api/ui/element/add \
 ```bash
 curl -X PUT http://localhost:7890/api/ui/theme/apply \
   -H "Content-Type: application/json" \
-  -d '{"theme_id": "default-dark", "target": "scene"}'
+  -d '{"theme_id": "default-dark"}'
+```
+
+### Пример: batch с цепочкой
+
+```bash
+curl -X POST http://localhost:7890/api/ui/batch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {"id": "layout1", "method": "POST", "path": "/api/ui/layout/create", "body": {"type": "vertical", "name": "Root", "parent": {"name": "Canvas"}}},
+      {"id": "btn1", "method": "POST", "path": "/api/ui/element/add", "body": {"parent": {"ref": "layout1"}, "component": "UIButton", "name": "PlayButton", "properties": {"labelText": "Play"}}}
+    ],
+    "stop_on_error": true
+  }'
+```
+
+### Пример: screen/from-spec (создать экран по спецификации)
+
+```bash
+curl -X POST http://localhost:7890/api/ui/screen/from-spec \
+  -H "Content-Type: application/json" \
+  -d '{
+    "scene_path": "Assets/Scenes/SampleScene.unity",
+    "screen_id": "main_menu",
+    "name": "MainMenuScreen",
+    "theme_id": "default",
+    "canvas": {"referenceResolution": {"x": 1920, "y": 1080}},
+    "operations": [
+      {"id": "main", "method": "POST", "path": "/api/ui/layout/create", "body": {"type": "vertical", "name": "Main", "parent": {"ref": "content"}, "spacing": "md", "padding": "md"}},
+      {"id": "btn1", "method": "POST", "path": "/api/ui/element/add", "body": {"parent": {"ref": "main"}, "component": "UIButton", "name": "PlayBtn", "properties": {"labelText": "Play", "variant": "Filled"}}},
+      {"id": "btn2", "method": "POST", "path": "/api/ui/element/add", "body": {"parent": {"ref": "main"}, "component": "UIButton", "name": "SettingsBtn", "properties": {"labelText": "Settings", "variant": "Outlined"}}}
+    ]
+  }'
+```
+
+### Пример: screen/show (переключить экран)
+
+```bash
+curl -X POST http://localhost:7890/api/ui/screen/show \
+  -H "Content-Type: application/json" \
+  -d '{"screen_id": "main_menu", "hide_others": true}'
 ```
 
 ---
 
-## 10. Примеры
+## 10. Layout First (веб-подход)
+
+Верстка строится по принципу «сначала layout, потом элементы» — как в CSS Flexbox.
+
+1. **Создать layout-контейнер** — `layout/create` с параметрами spacing, padding
+2. **Добавить элементы** — `element/add` с parent = layout; элементы автоматически получают LayoutElement с размерами по умолчанию
+3. **Переопределить при необходимости** — `layout` в body или `element/modify` с `set.layout`
+
+```bash
+# Layout First: создать секцию с отступами
+curl -X POST http://localhost:7890/api/ui/layout/create \
+  -H "Content-Type: application/json" \
+  -d '{"type":"vertical","name":"Section","parent":{"name":"Content"},"spacing":"md","padding":{"left":"md","right":"md","top":"sm","bottom":"sm"}}'
+
+# Добавить кнопку — получит preferredWidth:120, preferredHeight:40 автоматически
+curl -X POST http://localhost:7890/api/ui/element/add \
+  -H "Content-Type: application/json" \
+  -d '{"parent":{"name":"Section"},"component":"UIButton","name":"OK","properties":{"labelText":"OK"}}'
+
+# Кнопка с кастомным layout
+curl -X POST http://localhost:7890/api/ui/element/add \
+  -H "Content-Type: application/json" \
+  -d '{"parent":{"name":"Section"},"component":"UIButton","name":"WideBtn","properties":{"labelText":"Wide"},"layout":{"preferredWidth":200,"flexibleWidth":1}}'
+```
+
+---
+
+## 11. Примеры
 
 ### Создание темы вручную
 
@@ -565,7 +707,9 @@ curl -X PUT http://localhost:7890/api/ui/theme/apply \
 
 ### Полный сценарий через UACF API
 
-Используйте `POST /api/ui/batch` для пакетного создания экрана с несколькими элементами. Примеры curl — в разделе 9.
+1. Запустите Unity Editor и UACF.
+2. Выполните `POST /api/ui/setup/bootstrap` для создания токенов и префабов.
+3. Используйте `POST /api/ui/batch` для пакетного создания экрана с несколькими элементами (screen/create, layout/create, element/add с `parent: {"ref":"op_id"}`). Примеры curl — в разделе 9.
 
 ---
 

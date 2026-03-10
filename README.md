@@ -50,15 +50,14 @@ Or clone this repository and add the package via file reference:
 
 ## UACF API Endpoints
 
-When UACF is installed, the following endpoints are available:
+When UACF is installed, all UI operations are available via HTTP API (curl, Postman, AI agents) without one-off scripts:
 
-- `GET /api/ui/themes` — List themes
-- `POST /api/ui/theme/create` — Create theme
-- `PUT /api/ui/theme/apply` — Apply theme
-- `GET /api/ui/theme/get` — Get theme tokens
-- `POST /api/ui/screen/create` — Create screen
-- `POST /api/ui/element/add` — Add UI element
-- `GET /api/ui/components/list` — List available components
+- **Theme:** GET/POST/PUT themes, create with custom colors
+- **Tokens:** Update colors, typography, spacing in ColorPalette/TypographySet/SpacingScale
+- **Screen:** Create screen (open scene, Canvas, root UIPanel)
+- **Layout:** Create vertical/horizontal/grid layout
+- **Elements:** Add, modify (name, properties, RectTransform), remove, reorder
+- **Batch:** Chain operations with `parent: {"ref":"op_id"}`
 
 ## Documentation
 

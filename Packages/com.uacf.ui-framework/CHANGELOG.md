@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.1] - 2025-03-10
+
+### Added
+
+- **UITokenHandler**: Full implementation of UpdateColors, AddCustomColor, UpdateTypography, UpdateSpacing — modifies ScriptableObject assets
+- **UIBatchHandler**: Batch operations with `parent: {"ref":"op_id"}` for chaining element/add, layout/create, screen/create
+- **UIScreenHandler**: Create screen — open scene, create Canvas, root UIPanel (stretch), ThemeApplier
+- **UIThemeHandler**: Create theme — new Theme + ColorPalette with custom colors
+- **UIElementHandler**: Modify (name, properties, RectTransform), Remove, Reorder
+- **UILayoutHandler**: Create layout (vertical/horizontal/grid) with parent resolution
+
+### Changed
+
+- All UI API handlers now fully functional — no stubs. All operations via HTTP API without one-off scripts.
+
 ## [1.0.0] - 2025-03-10
 
 ### Added
